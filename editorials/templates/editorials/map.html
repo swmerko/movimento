@@ -1,0 +1,137 @@
+{% extends 'layout.html' %}
+{% load staticfiles %}
+{% load static %}
+
+
+
+{% block sidebar %}
+
+    <!-- Intro -->
+    <section id="intro">
+        <header>
+            <h2>Mappa degli eventi</h2>
+
+            {#            <p>Another fine responsive site template by <a href="http://html5up.net">HTML5#}
+            {#                UP</a></p>#}
+        </header>
+    </section>
+
+    <!-- Mini Posts -->
+    <section>
+        <div class="mini-posts">
+            {% for event in events %}
+                <!-- Mini Post -->
+                <article class="mini-post">
+                    <header>
+                        <h3><a href="#">{{ event.title }}</a></h3>
+                        <time class="published" datetime="{{ event.start_date }}">{{ event.start_date }}</time>
+                        <p>{{ event.city }}</p>
+                    </header>
+                </article>
+
+            {% endfor %}
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <section id="footer">
+        <ul class="icons">
+            <li><a href="#" class="fa-twitter"><span class="label">Twitter</span></a></li>
+            <li><a href="#" class="fa-facebook"><span class="label">Facebook</span></a></li>
+            <li><a href="#" class="fa-instagram"><span class="label">Instagram</span></a></li>
+            <li><a href="#" class="fa-rss"><span class="label">RSS</span></a></li>
+            <li><a href="#" class="fa-envelope"><span class="label">Email</span></a></li>
+        </ul>
+        <p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>.
+            Images: <a href="http://unsplash.com">Unsplash</a>.</p>
+    </section>
+
+{% endblock sidebar %}
+
+{% block main %}
+
+    <!-- Post -->
+    <article class="post">
+
+        <div id="map-canvas" style="height: 750px"></div>
+        <footer>
+            <ul class="stats">
+                <li><a href="#">Eventi</a></li>
+                <li><a href="#" class="icon fa-map-marker">{{ events.count }}</a></li>
+            </ul>
+        </footer>
+    </article>
+
+{% endblock main %}
+
+{% block bottomscripts %}
+    {{ block.super }}
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAFmqO4VtFQEUTpEXKzPxrFtBAzGOpzpQ&sensor=false"></script>
+    <script type="text/javascript" src="{% static 'editorial/events/maps/js/markerclusterer_compiled.js' %}"></script>
+
+    <script type="text/javascript">
+        function initialize() {
+
+            var mapOptions = {
+                zoom: 6
+            };
+            var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+            var bounds = new google.maps.LatLngBounds();
+
+            var markers = [];
+
+            {% for mark in events %}
+                var point = new google.maps.LatLng({{mark.geo_lat|safe}}, {{mark.geo_long|safe}});
+                var marker_{{ mark.id }} = new google.maps.Marker({
+                    position: point,
+                    map: map,
+                    title: '{{mark.username}}',
+                    icon: '{% static 'editorial/events/maps/images/marker_small.png' %}'
+                });
+                bounds.extend(marker_{{ mark.id }}.position);
+                google.maps.event.addListener(marker_{{ mark.id }}, 'click', function () {
+                    map.setCenter(marker_{{ mark.id }}.getPosition());
+                    map.setZoom(9);
+                });
+                {#                google.maps.event.addListener(marker_{{ mark.id }}, 'mouseover', function () {#}
+                {#                    $("#" + marker_{{ mark.id }}.title).show();#}
+                {#                });#}
+                {#                google.maps.event.addListener(marker_{{ mark.id }}, 'mouseout', function () {#}
+                {#                    $("#" + marker_{{ mark.id }}.title).hide();#}
+                {#                });#}
+                markers.push(marker_{{ mark.id }});
+            {% endfor %}
+
+            var mcOptions = {
+                gridSize: 80,
+                maxZoom: 10,
+                styles: [
+                    {
+                        url: '{% static 'editorial/events/maps/images/cluster_small.png' %}',
+                        textColor: '#FFFFFF',
+                        width: 96,
+                        height: 48,
+                        anchor: [6, 40],
+                        textSize: 12,
+                    },
+                    {
+                        url: '{% static 'editorial/events/maps/images/cluster_small.png' %}',
+                        textColor: '#FFFFFF',
+                        width: 92,
+                        height: 48,
+                        anchor: [6, 36],
+                        textSize: 12,
+                    }]
+            };
+            var mc = new MarkerClusterer(map, markers, mcOptions);
+
+            //now fit the map to the newly inclusive bounds
+            map.fitBounds(bounds);
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+
+    </script>
+{% endblock %}
