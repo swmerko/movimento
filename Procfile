@@ -1,0 +1,1 @@
+web: gunicorn FOCOLARE.wsgi --log-file -
