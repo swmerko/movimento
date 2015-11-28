@@ -23,7 +23,7 @@
         <div class="mini-posts">
             {% for event in events %}
                 <!-- Mini Post -->
-                <article class="mini-post">
+                <article class="mini-post" id="event_id_{{ event.pk }}">
                     <header>
                         <h3><a href="#">{{ event.title }}</a></h3>
                         <time class="published"
@@ -75,24 +75,8 @@
                     <footer>
 
                         <div id="map-canvas_{{ event.pk }}" style="height: 300px;width: 500px;"></div>
-                        {#                        <ul class="stats">#}
-                        {#                            <li><a href="#" class="icon fa-close" data-dismiss="modal">Chiudi</a></li>#}
-                        {#                        </ul>#}
                     </footer>
                 </article>
-                {#                <div class="modal-content">#}
-                {#                    <div class="modal-header">#}
-                {#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span#}
-                {#                                aria-hidden="true">&times;</span></button>#}
-                {#                        <h4 class="modal-title">{{ event.title }}</h4>#}
-                {#                    </div>#}
-                {#                    <div class="modal-body">#}
-                {#                        <p>One fine body&hellip;</p>#}
-                {#                    </div>#}
-                {#                    <div class="modal-footer">#}
-                {#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-                {#                    </div>#}
-                {#                </div><!-- /.modal-content -->#}
             </div>
         </div>
 
@@ -127,13 +111,12 @@
                     .done(function (data) {
 
                         var mapOptions = {
-                            zoom: 10
+                            zoom: 8
                         };
                         var map = new google.maps.Map(document.getElementById("map-canvas_" + data.id), mapOptions);
-                        var bounds = new google.maps.LatLngBounds();
                         var point = new google.maps.LatLng(data.geo_lat, data.geo_long);
 
-                        var marker = new Marker({
+                        new Marker({
                             map: map,
                             position: point,
                             icon: {
@@ -146,8 +129,9 @@
                             title: '{{mark.title}}',
                             map_icon_label: '<span class="map-icon map-icon-postal-code-prefix"></span>'
                         });
-                        bounds.extend(marker.position);
-                        map.fitBounds(bounds);
+
+                        map.setCenter(point);
+                        map.setZoom(16);
                     });
 
         };
@@ -191,16 +175,17 @@
                     map.setCenter(marker_{{ mark.id }}.getPosition());
                     map.setZoom(9);
                     $('#eventModal_{{ mark.pk }}').modal('show');
-                    setTimeout(function () {
+
+                    $('#eventModal_{{ mark.pk }}').on('shown.bs.modal', function (e) {
                         init_event_map({{ mark.pk }});
-                    }, 2000);
+                    });
                 });
-                {#                google.maps.event.addListener(marker_{{ mark.id }}, 'mouseover', function () {#}
-                {#                    $("#" + marker_{{ mark.id }}.title).show();#}
-                {#                });#}
-                {#                google.maps.event.addListener(marker_{{ mark.id }}, 'mouseout', function () {#}
-                {#                    $("#" + marker_{{ mark.id }}.title).hide();#}
-                {#                });#}
+                                google.maps.event.addListener(marker_{{ mark.id }}, 'mouseover', function () {
+                                    $("#event_id_{{ mark.pk }}").addClass('map-event-zoom-effect');
+                                });
+                                google.maps.event.addListener(marker_{{ mark.id }}, 'mouseout', function () {
+                                    $("#event_id_{{ mark.pk }}").removeClass('map-event-zoom-effect');
+                                });
                 markers.push(marker_{{ mark.id }});
             {% endfor %}
 
