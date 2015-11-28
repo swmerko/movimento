@@ -24,6 +24,7 @@ class Event(TimeStampedModel, GeolocationModel):
     start_date = models.DateTimeField(default=datetime.now)
     end_date = models.DateTimeField(blank=True, null=True, help_text=_('Violet'))
     reference_email = models.EmailField(blank=True, null=True)
+    reference_phone = models.CharField(max_length=36, blank=True, null=True)
     color = models.CharField(max_length=24,
                              choices=COLORS,
                              blank=True,

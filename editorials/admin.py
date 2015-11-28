@@ -8,15 +8,18 @@ class EventAdmin(admin.ModelAdmin):
         'title',
         'start_date',
         'end_date',
+        'color',
         'reference_email',
-        'text',
+        'reference_phone',
         'address',
         'postcode',
         'city',
         'country',
+        'text',
         'geo_lat',
         'geo_long',
-        'color'
+        'note'
+
     )
     readonly_fields = ('geo_lat', 'geo_long')
 
