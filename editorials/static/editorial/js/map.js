@@ -6,7 +6,7 @@ var init_event_map = function (id) {
         .done(function (data) {
 
             var mapOptions = {
-                zoom: 8
+                zoom: 10
             };
             var map = new google.maps.Map(document.getElementById("map-canvas_" + data.id), mapOptions);
             var point = new google.maps.LatLng(data.geo_lat, data.geo_long);
@@ -85,8 +85,6 @@ function initialize() {
                 });
                 bounds.extend(marker.position);
                 google.maps.event.addListener(marker, 'click', function () {
-                    map.setCenter(marker.getPosition());
-                    map.setZoom(9);
                     $('#eventModal_' + event.id).modal('show');
                 });
                 google.maps.event.addListener(marker, 'mouseover', function () {

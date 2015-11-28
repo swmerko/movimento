@@ -1,9 +1,9 @@
 .map-icon-label .map-icon {
-	font-size: 20px;
-	color: #FFFFFF;
-	line-height: 48px;
-	text-align: center;
-	white-space: nowrap;
+    font-size: 20px;
+    color: #FFFFFF;
+    line-height: 48px;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .map-event-zoom-effect {
@@ -12,4 +12,10 @@
     -ms-transform: scale(1.1);
     -o-transform: scale(1.1);
     transform: scale(1.1);
+}
+
+.modal-dialog {
+    max-width: 900px;
+    min-width: 320px;
+    width: 100%;
 }
