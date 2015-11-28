@@ -88,10 +88,6 @@ function initialize() {
                     map.setCenter(marker.getPosition());
                     map.setZoom(9);
                     $('#eventModal_' + event.id).modal('show');
-
-                    $('#eventModal_' + event.id).on('shown.bs.modal', function (e) {
-                        init_event_map(event.id);
-                    });
                 });
                 google.maps.event.addListener(marker, 'mouseover', function () {
                     $("#event_id_" + event.id).addClass('map-event-zoom-effect');
@@ -100,6 +96,9 @@ function initialize() {
                     $("#event_id_" + event.id).removeClass('map-event-zoom-effect');
                 });
                 markers.push(marker);
+                $('#eventModal_' + event.id).on('shown.bs.modal', function (e) {
+                    init_event_map(event.id);
+                });
             });
 
             new MarkerClusterer(map, markers, mcOptions);

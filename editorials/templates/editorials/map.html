@@ -25,7 +25,7 @@
                 <!-- Mini Post -->
                 <article class="mini-post" id="event_id_{{ event.pk }}">
                     <header>
-                        <h3><a href="#">{{ event.title }}</a></h3>
+                        <h3><a href="#" data-toggle="modal" data-target="#eventModal_{{ event.pk }}">{{ event.title }}</a></h3>
                         <time class="published"
                               datetime="{{ event.start_date|date:"SHORT_DATE_FORMAT" }}">{{ event.start_date }}</time>
                         <p>{{ event.city }}</p>
