@@ -27,6 +27,7 @@ var init_event_map = function (id) {
 
             map.setCenter(point);
             map.setZoom(16);
+            $("#event_id_" + data.id).removeClass('map-event-zoom-effect');
         });
 
 };
@@ -61,7 +62,7 @@ function initialize() {
             format: "json"
         })
         .done(function (data) {
-            var mapOptions = {zoom: 6},
+            var mapOptions = {},
                 map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions),
                 bounds = new google.maps.LatLngBounds(),
                 markers = [],
@@ -107,4 +108,5 @@ function initialize() {
             map.fitBounds(bounds);
         });
 };
+
 google.maps.event.addDomListener(window, 'load', initialize);

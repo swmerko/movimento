@@ -72,9 +72,18 @@
                     </header>
 
                     <p>{{ event.text }}</p>
-                    <footer>
 
-                        <div id="map-canvas_{{ event.pk }}" style="height: 300px;width: 500px;"></div>
+
+                    <div id="map-canvas_{{ event.pk }}" style="height: 300px;width: 500px;"></div>
+                    <footer>
+                        <ul class="stats">
+                            {% if event.reference_phone %}
+                                <li><a href="#" class="icon fa-phone">{{ event.reference_phone }}</a></li>
+                            {% endif %}
+                            {% if event.reference_email %}
+                                <li><a href="#" class="icon fa-email">{{ event.reference_email }}</a></li>
+                            {% endif %}
+                        </ul>
                     </footer>
                 </article>
             </div>
@@ -86,6 +95,7 @@
 
 {% block headscripts %}
     {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'map-icons-master/dist/css/map-icons.css' %}">
     <link rel="stylesheet" href="{% static 'editorial/css/map.css' %}"/>
 {% endblock headscripts %}
 
@@ -97,10 +107,9 @@
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAFmqO4VtFQEUTpEXKzPxrFtBAzGOpzpQ&sensor=false"></script>
     <script type="text/javascript" src="{% static 'editorial/events/maps/js/markerclusterer_compiled.js' %}"></script>
 
-    <script type="text/javascript" src="{% static 'editorial/js/map.js' %}"></script>
 
     <!-- Map Icons -->
-    <link rel="stylesheet" type="text/css" href="{% static 'map-icons-master/dist/css/map-icons.css' %}">
     <script type="text/javascript" src="{% static 'map-icons-master/dist/js/map-icons.js' %}"></script>
+    <script type="text/javascript" src="{% static 'editorial/js/map.js' %}"></script>
 
 {% endblock %}
