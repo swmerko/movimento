@@ -1,6 +1,8 @@
 {% extends 'layout.html' %}
 {% load staticfiles %}
 {% load static %}
+{% load i18n %}
+{% load l10n %}
 
 
 
@@ -24,27 +26,14 @@
                 <article class="mini-post">
                     <header>
                         <h3><a href="#">{{ event.title }}</a></h3>
-                        <time class="published" datetime="{{ event.start_date }}">{{ event.start_date }}</time>
+                        <time class="published"
+                              datetime="{{ event.start_date|date:"SHORT_DATE_FORMAT" }}">{{ event.start_date }}</time>
                         <p>{{ event.city }}</p>
                     </header>
                 </article>
 
             {% endfor %}
         </div>
-    </section>
-
-
-    <!-- Footer -->
-    <section id="footer">
-        <ul class="icons">
-            <li><a href="#" class="fa-twitter"><span class="label">Twitter</span></a></li>
-            <li><a href="#" class="fa-facebook"><span class="label">Facebook</span></a></li>
-            <li><a href="#" class="fa-instagram"><span class="label">Instagram</span></a></li>
-            <li><a href="#" class="fa-rss"><span class="label">RSS</span></a></li>
-            <li><a href="#" class="fa-envelope"><span class="label">Email</span></a></li>
-        </ul>
-        <p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>.
-            Images: <a href="http://unsplash.com">Unsplash</a>.</p>
     </section>
 
 {% endblock sidebar %}
@@ -63,15 +52,107 @@
         </footer>
     </article>
 
+    {% for event in events %}
+        <div id="eventModal_{{ event.pk }}" class="modal fade" tabindex="-1" role="dialog" style="margin-top:50px">
+            <div class="modal-dialog">
+
+                <!-- Post -->
+                <article class="post">
+                    <header>
+                        <div class="title">
+                            <h2><a href="#">{{ event.title }}</a></h2>
+
+                            <p>{{ event.place_address }}</p>
+
+                            <p>
+                                <time class="published"
+                                      datetime="{{ event.start_date|date:"SHORT_DATE_FORMAT" }}">{{ event.start_date }}</time>
+                            </p>
+                        </div>
+                    </header>
+
+                    <p>{{ event.text }}</p>
+                    <footer>
+
+                        <div id="map-canvas_{{ event.pk }}" style="height: 300px;width: 500px;"></div>
+                        {#                        <ul class="stats">#}
+                        {#                            <li><a href="#" class="icon fa-close" data-dismiss="modal">Chiudi</a></li>#}
+                        {#                        </ul>#}
+                    </footer>
+                </article>
+                {#                <div class="modal-content">#}
+                {#                    <div class="modal-header">#}
+                {#                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span#}
+                {#                                aria-hidden="true">&times;</span></button>#}
+                {#                        <h4 class="modal-title">{{ event.title }}</h4>#}
+                {#                    </div>#}
+                {#                    <div class="modal-body">#}
+                {#                        <p>One fine body&hellip;</p>#}
+                {#                    </div>#}
+                {#                    <div class="modal-footer">#}
+                {#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
+                {#                    </div>#}
+                {#                </div><!-- /.modal-content -->#}
+            </div>
+        </div>
+
+    {% endfor %}
+
 {% endblock main %}
+
+{% block headscripts %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'editorial/css/map.css' %}"/>
+{% endblock headscripts %}
 
 {% block bottomscripts %}
     {{ block.super }}
+
+    <script type="text/javascript" src="{% static 'bootstrap-3.3.6-dist/js/bootstrap.min.js' %}"></script>
     <script type="text/javascript"
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAFmqO4VtFQEUTpEXKzPxrFtBAzGOpzpQ&sensor=false"></script>
     <script type="text/javascript" src="{% static 'editorial/events/maps/js/markerclusterer_compiled.js' %}"></script>
 
+    <!-- Map Icons -->
+    <link rel="stylesheet" type="text/css" href="{% static 'map-icons-master/dist/css/map-icons.css' %}">
+    <script type="text/javascript" src="{% static 'map-icons-master/dist/js/map-icons.js' %}"></script>
+
     <script type="text/javascript">
+
+        var init_event_map = function (id) {
+            var eventApi = "/editorial/api/events/" + id + "/";
+            $.getJSON(eventApi, {
+                        format: "json"
+                    })
+                    .done(function (data) {
+
+                        var mapOptions = {
+                            zoom: 10
+                        };
+                        var map = new google.maps.Map(document.getElementById("map-canvas_" + data.id), mapOptions);
+                        var bounds = new google.maps.LatLngBounds();
+                        var point = new google.maps.LatLng(data.geo_lat, data.geo_long);
+
+                        var marker = new Marker({
+                            map: map,
+                            position: point,
+                            icon: {
+                                path: MAP_PIN,
+                                fillColor: data.color,
+                                fillOpacity: 1,
+                                strokeColor: '',
+                                strokeWeight: 0
+                            },
+                            title: '{{mark.title}}',
+                            map_icon_label: '<span class="map-icon map-icon-postal-code-prefix"></span>'
+                        });
+                        bounds.extend(marker.position);
+                        map.fitBounds(bounds);
+                    });
+
+        };
+
+
         function initialize() {
 
             var mapOptions = {
@@ -84,16 +165,35 @@
 
             {% for mark in events %}
                 var point = new google.maps.LatLng({{mark.geo_lat|safe}}, {{mark.geo_long|safe}});
-                var marker_{{ mark.id }} = new google.maps.Marker({
-                    position: point,
+
+                var marker_{{ mark.id }} = new Marker({
                     map: map,
-                    title: '{{mark.username}}',
-                    icon: '{% static 'editorial/events/maps/images/marker_small.png' %}'
+                    position: point,
+                    icon: {
+                        path: MAP_PIN,
+                        fillColor: '{{ mark.color }}',
+                        fillOpacity: 1,
+                        strokeColor: '',
+                        strokeWeight: 0
+                    },
+                    title: '{{mark.title}}',
+                    map_icon_label: '<span class="map-icon map-icon-postal-code-prefix"></span>'
                 });
+
+                {#                var marker_{{ mark.id }} = new google.maps.Marker({#}
+                {#                    position: point,#}
+                {#                    map: map,#}
+                {#                    title: '{{mark.username}}',#}
+                {#                    icon: '{% static 'editorial/events/maps/images/marker_small.png' %}'#}
+                {#                });#}
                 bounds.extend(marker_{{ mark.id }}.position);
                 google.maps.event.addListener(marker_{{ mark.id }}, 'click', function () {
                     map.setCenter(marker_{{ mark.id }}.getPosition());
                     map.setZoom(9);
+                    $('#eventModal_{{ mark.pk }}').modal('show');
+                    setTimeout(function () {
+                        init_event_map({{ mark.pk }});
+                    }, 2000);
                 });
                 {#                google.maps.event.addListener(marker_{{ mark.id }}, 'mouseover', function () {#}
                 {#                    $("#" + marker_{{ mark.id }}.title).show();#}
@@ -131,7 +231,6 @@
             map.fitBounds(bounds);
         }
         google.maps.event.addDomListener(window, 'load', initialize);
-
 
     </script>
 {% endblock %}

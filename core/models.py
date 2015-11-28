@@ -35,3 +35,6 @@ class GeolocationModel(models.Model):
             self.geo_long = longitude
             if commit:
                 self.save()
+
+    def place_address(self):
+        return "%s - %s %s, %s" % (self.address, self.postcode, self.city, self.country)

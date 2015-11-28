@@ -9,13 +9,18 @@
 -->
 <html>
 <head>
-    <title>Future Imperfect by HTML5 UP</title>
+    <title>Movimento Focolari Marche</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.6-dist/css/bootstrap.min.css' %}"/>
     <!--[if lte IE 8]><script src="{% static 'assets/js/ie/html5shiv.js' %}"></script><![endif]-->
     <link rel="stylesheet" href="{% static 'assets/css/main.css' %}"/>
     <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
     <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+
+    {% block headscripts %}
+    {% endblock headscripts %}
 </head>
 <body>
 
@@ -63,7 +68,7 @@
                         <p>Lorem ipsum dolor amet nullam consequat etiam feugiat</p>
                     </div>
                     <div class="meta">
-                        <time class="published" datetime="2015-11-01">November 1, 2015</time>
+                        <time datetime="2015-11-01">November 1, 2015</time>
                         <a href="#" class="author"><span class="name">Jane Doe</span><img src="images/avatar.jpg"
                                                                                           alt=""/></a>
                     </div>
@@ -121,21 +126,21 @@
                 </div>
             </section>
 
-
-            <!-- Footer -->
-            <section id="footer">
-                <ul class="icons">
-                    <li><a href="#" class="fa-twitter"><span class="label">Twitter</span></a></li>
-                    <li><a href="#" class="fa-facebook"><span class="label">Facebook</span></a></li>
-                    <li><a href="#" class="fa-instagram"><span class="label">Instagram</span></a></li>
-                    <li><a href="#" class="fa-rss"><span class="label">RSS</span></a></li>
-                    <li><a href="#" class="fa-envelope"><span class="label">Email</span></a></li>
-                </ul>
-                <p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>.
-                    Images: <a href="http://unsplash.com">Unsplash</a>.</p>
-            </section>
-
         {% endblock sidebar %}
+
+
+        <!-- Footer -->
+        <section id="footer">
+            <ul class="icons">
+                <li><a href="#" class="fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="fa-facebook"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="fa-instagram"><span class="label">Instagram</span></a></li>
+                <li><a href="#" class="fa-rss"><span class="label">RSS</span></a></li>
+                <li><a href="#" class="fa-envelope"><span class="label">Email</span></a></li>
+            </ul>
+            <p class="copyright">&copy; Movimento Focolari Marche. Design: <a href="http://html5up.net">HTML5 UP</a>.
+                Developer: <a href="mailto:matteo.ercolani@gmail.com">MatteoErcolani</a>.</p>
+        </section>
 
     </section>
 

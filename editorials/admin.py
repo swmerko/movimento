@@ -15,7 +15,8 @@ class EventAdmin(admin.ModelAdmin):
         'city',
         'country',
         'geo_lat',
-        'geo_long'
+        'geo_long',
+        'color'
     )
     readonly_fields = ('geo_lat', 'geo_long')
 
